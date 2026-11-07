@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kuis Pembagian - Kelas 3 SD</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Comic Sans MS', 'Trebuchet MS', 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 50%, #fbc2eb 100%);
+  min-height: 100vh;
+  padding: 15px;
+  color: #2d3748;
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.container { max-width: 820px; margin: 0 auto; }
+
+.screen { animation: fadeIn 0.5s ease; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.card {
+  background: white;
+  border-radius: 25px;
+  padding: 30px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  border: 4px solid #fff;
+}
+
+h1 { color: #6b46c1; font-size: 32px; text-align: center; margin-bottom: 10px; }
+h2 { color: #ed8936; font-size: 24px; text-align: center; margin-bottom: 20px; }
+h3 { color: #2b6cb0; margin-bottom: 10px; font-size: 20px; }
+
+.intro { text-align: center; font-size: 18px; margin-bottom: 25px; color: #4a5568; }
+
+.form-group { margin-bottom: 20px; }
+.form-group label {
+  display: block; font-size: 20px; margin-bottom: 8px;
+  color: #2d3748; font-weight: bold;
+}
+.form-group input {
+  width: 100%; padding: 15px; font-size: 20px;
+  border: 3px solid #cbd5e0; border-radius: 15px;
+  font-family: inherit; transition: border-color 0.3s;
+}
+.form-group input:focus { outline: none; border-color: #6b46c1; }
+
+.btn-start, .btn-next {
+  display: block; width: 100%; padding: 18px; font-size: 22px;
+  color: white; border: none; border-radius: 15px; cursor: pointer;
+  font-family: inherit; font-weight: bold; margin-top: 15px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.btn-start { background: linear-gradient(135deg, #48bb78 0%, #38a169 100%); }
+.btn-start:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(72,187,120,0.4); }
+.btn-next { background: linear-gradient(135deg, #9f7aea, #805ad5); }
+.btn-next:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(159,122,234,0.4); }
+
+.rules {
+  margin-top: 25px; padding: 20px; background: #ebf8ff;
+  border-radius: 15px; border-left: 5px solid #4299e1;
+}
+.rules ul { list-style: none; padding-left: 0; }
+.rules li { padding: 5px 0; padding-left: 30px; position: relative; }
+.rules li:before { content: "✅"; position: absolute; left: 0; }
+
+/* Quiz header */
+.quiz-header {
+  background: white; border-radius: 20px; padding: 15px 20px;
+  margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+.student-info { font-size: 18px; font-weight: bold; color: #6b46c1; margin-bottom: 10px; }
+.progress-info { display: flex; align-items: center; gap: 15px; }
+#questionCounter { font-weight: bold; color: #2d3748; white-space: nowrap; }
+.progress-bar { flex: 1; height: 20px; background: #e2e8f0; border-radius: 10px; overflow: hidden; }
+.progress-fill {
+  height: 100%; background: linear-gradient(90deg, #48bb78, #38a169);
+  border-radius: 10px; transition: width 0.5s ease; width: 0%;
+}
+
+.question-card {
+  background: white; border-radius: 25px; padding: 30px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+.question-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 20px; flex-wrap: wrap; gap: 10px;
+}
+.question-badge {
+  background: linear-gradient(135deg, #667eea, #764ba2); color: white;
+  padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 16px;
+}
+.question-badge.cerita { background: linear-gradient(135deg, #f093fb, #f5576c); }
+.question-badge.info { background: linear-gradient(135deg, #f6ad55, #ed8936); }
+
+.question-instruction {
+  background: #fef5e7; border-left: 5px solid #ed8936;
+  padding: 12px 15px; border-radius: 8px; margin-bottom: 20px;
+  font-size: 17px; color: #744210;
+}
+.question-text {
+  font-size: 22px; margin-bottom: 25px; line-height: 1.5;
+  color: #2d3748; font-weight: 500;
+}
+.question-text .math {
+  display: inline-block; background: #ebf8ff; padding: 5px 12px;
+  border-radius: 8px; font-weight: bold; color: #2b6cb0; font-size: 24px;
+}
+
+/* Answer options */
+.options { display: grid; gap: 12px; margin-bottom: 20px; }
+.option {
+  background: #f7fafc; border: 3px solid #e2e8f0; border-radius: 12px;
+  padding: 15px 20px; font-size: 20px; cursor: pointer; transition: all 0.2s;
+  font-family: inherit; text-align: left; display: flex; align-items: center; gap: 12px;
+}
+.option:hover { background: #ebf8ff; border-color: #4299e1; transform: translateX(5px); }
+.option.selected { background: #bee3f8; border-color: #3182ce; font-weight: bold; }
+.option.correct { background: #c6f6d5; border-color: #38a169; }
+.option.wrong { background: #fed7d7; border-color: #e53e3e; }
+.option-marker {
+  display: inline-block; width: 35px; height: 35px;
+  background: #4299e1; color: white; border-radius: 50%;
+  text-align: center; line-height: 35px; font-weight: bold; flex-shrink: 0;
+}
+.option-checkbox { width: 25px; height: 25px; flex-shrink: 0; pointer-events: none; }
+
+/* Isian */
+.isian-input {
+  width: 100%; max-width: 250px; padding: 15px; font-size: 28px;
+  border: 3px solid #cbd5e0; border-radius: 12px; text-align: center;
+  font-family: inherit; font-weight: bold; display: block; margin: 0 auto;
+}
+.isian-input:focus { outline: none; border-color: #6b46c1; }
+
+/* Klik kartu */
+.cards-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px; }
+@media (max-width: 500px) { .cards-grid { grid-template-columns: repeat(2, 1fr); } }
+.card-option {
+  background: linear-gradient(135deg, #fed7aa, #fdba74);
+  border: 4px solid #fb923c; border-radius: 20px; padding: 30px 15px;
+  font-size: 38px; font-weight: bold; cursor: pointer; text-align: center;
+  transition: all 0.2s; font-family: inherit; color: #7c2d12;
+}
+.card-option:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.2); }
+.card-option.correct { background: linear-gradient(135deg, #86efac, #4ade80); border-color: #16a34a; color: #14532d; }
+.card-option.wrong { background: linear-gradient(135deg, #fca5a5, #f87171); border-color: #dc2626; color: #7f1d1d; }
+
+/* Buttons */
+.btn-check {
+  display: block; width: 100%; padding: 15px; font-size: 20px;
+  background: linear-gradient(135deg, #4299e1, #3182ce); color: white;
+  border: none; border-radius: 12px; cursor: pointer; font-family: inherit;
+  font-weight: bold; transition: transform 0.2s; margin-bottom: 15px;
+}
+.btn-check:hover:not(:disabled) { transform: translateY(-2px); }
+.btn-check:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+.btn-retry {
+  display: block; width: 100%; padding: 15px; font-size: 20px;
+  background: linear-gradient(135deg, #ed8936, #dd6b20); color: white;
+  border: none; border-radius: 12px; cursor: pointer; font-family: inherit;
+  font-weight: bold; margin-top: 15px; transition: transform 0.2s;
+}
+.btn-retry:hover { transform: translateY(-2px); }
+
+/* Feedback */
+.feedback {
+  margin-top: 20px; padding: 20px; border-radius: 15px;
+  font-size: 19px; line-height: 1.5; animation: slideUp 0.4s ease;
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.feedback.correct { background: #f0fff4; border: 3px solid #48bb78; color: #22543d; }
+.feedback.wrong { background: #fff5f5; border: 3px solid #fc8181; color: #742a2a; }
+.feedback.show-answer { background: #fffff0; border: 3px solid #ecc94b; color: #744210; }
+.feedback-icon { font-size: 36px; display: block; margin-bottom: 10px; text-align: center; }
+.attempts-info { text-align: center; margin-top: 10px; color: #718096; font-size: 16px; }
+
+/* Result */
+.result-card { text-align: center; }
+.score-circle {
+  display: inline-block; width: 200px; height: 200px; border-radius: 50%;
+  background: linear-gradient(135deg, #48bb78, #38a169); color: white;
+  line-height: 200px; font-size: 50px; font-weight: bold; margin: 20px 0;
+  box-shadow: 0 10px 25px rgba(72,187,120,0.4);
+}
+.stars { font-size: 40px; margin: 15px 0; letter-spacing: 5px; }
+.result-message {
+  font-size: 20px; margin: 20px 0; padding: 15px;
+  background: #ebf8ff; border-radius: 15px; color: #2b6cb0;
+}
+.result-details { margin: 20px 0; text-align: left; }
+.result-item {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 15px; margin-bottom: 8px; border-radius: 10px; font-size: 16px;
+  gap: 10px;
+}
+.result-item.correct { background: #f0fff4; border-left: 4px solid #48bb78; }
+.result-item.wrong { background: #fff5f5; border-left: 4px solid #fc8181; }
+.result-item-icon { font-size: 22px; flex-shrink: 0; }
+
+.confetti {
+  position: fixed; top: -10px; width: 10px; height: 10px;
+  opacity: 0.8; z-index: 1000; animation: fall 3s linear infinite;
+}
+@keyframes fall {
+  to { transform: translateY(105vh) rotate(720deg); opacity: 0; }
+}
+
+@media (max-width: 600px) {
+  body { font-size: 16px; }
+  h1 { font-size: 24px; }
+  h2 { font-size: 20px; }
+  .question-text { font-size: 18px; }
+  .card, .question-card { padding: 20px; }
+  .score-circle { width: 160px; height: 160px; line-height: 160px; font-size: 40px; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- ====== START SCREEN ====== -->
+  <div id="startScreen" class="screen">
+    <div class="card">
+      <h1>🎯 Kuis Matematika Kelas 3 🎯</h1>
+      <h2>Yuk Belajar Pembagian! ➗</h2>
+      <p class="intro">Halo teman-teman ceria! Saatnya menguji kemampuanmu berhitung pembagian. Ada 12 soal seru yang menanti. Siap? Yuk mulai! 🌟</p>
+      <form id="identityForm">
+        <div class="form-group">
+          <label for="namaSiswa">📝 Nama Lengkap</label>
+          <input type="text" id="namaSiswa" required placeholder="Tulis namamu di sini ya..." autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label for="kelasSiswa">🏫 Kelas</label>
+          <input type="text" id="kelasSiswa" required placeholder="Contoh: 3A atau 3B" value="3" autocomplete="off">
+        </div>
+        <button type="submit" class="btn-start">🚀 Mulai Kuis!</button>
+      </form>
+      <div class="rules">
+        <h3>📋 Aturan Main:</h3>
+        <ul>
+          <li>Ada 12 soal pembagian (7 soal langsung + 5 soal cerita)</li>
+          <li>Cara menjawab beragam: isian, pilihan ganda, benar-salah, klik kartu, dan pilih banyak jawaban</li>
+          <li>Kamu boleh mencoba menjawab 2 kali untuk setiap soal</li>
+          <li>Kamu tidak bisa lanjut ke soal berikutnya sebelum soal sekarang selesai</li>
+          <li>Baca petunjuknya dengan teliti ya, semangat berlatih!</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== QUIZ SCREEN ====== -->
+  <div id="quizScreen" class="screen" style="display:none;">
+    <header class="quiz-header">
+      <div class="student-info">
+        👦 <span id="studentName"></span> &nbsp;|&nbsp; 🏫 Kelas <span id="studentClass"></span>
+      </div>
+      <div class="progress-info">
+        <span id="questionCounter">Soal 1 dari 12</span>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      </div>
+    </header>
+    <main class="question-card" id="questionArea"></main>
+  </div>
+
+  <!-- ====== RESULT SCREEN ====== -->
+  <div id="resultScreen" class="screen" style="display:none;">
+    <div class="card result-card">
+      <h1 id="resultTitle">🎉 Kuis Selesai! 🎉</h1>
+      <div class="stars" id="starsDisplay"></div>
+      <div class="score-circle" id="scoreCircle">0%</div>
+      <div class="result-message" id="resultMessage"></div>
+      <div class="result-details" id="resultDetails"></div>
+      <button onclick="restartQuiz()" class="btn-start">🔄 Ulangi Kuis</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ============================================================
+// DATA SOAL
+// 7 soal langsung + 5 soal cerita = 12 soal
+// 5 variasi cara menjawab: isian, pg, benar-salah, klik-kartu, pilih-semua
+// ============================================================
+const questions = [
+  // ===== 7 SOAL LANGSUNG =====
+  {
+    type: 'isian', category: 'langsung',
+    instruction: 'Tulis jawabanmu di kotak yang tersedia, lalu tekan tombol Periksa Jawaban.',
+    question: 'Berapakah hasil dari <span class="math">18 : 3 = ...</span>',
+    answer: 6,
+    correctMsg: '🌟 Hebat sekali! 18 : 3 = 6. Kamu memang jago berhitung!',
+    wrongMsg: '💪 Ingat: pembagian adalah membagi sama rata. Bayangkan 18 permen dibagi untuk 3 anak, setiap anak dapat 6 permen. Jadi 18 : 3 = 6.',
+    hint: 'Coba pikirkan: 3 × berapa = 18?'
+  },
+  {
+    type: 'pg', category: 'langsung',
+    instruction: 'Pilih satu jawaban yang paling benar dengan mengkliknya.',
+    question: 'Berapakah hasil dari <span class="math">24 : 6 = ...</span>',
+    options: ['3', '4', '5', '6'],
+    answer: '4',
+    correctMsg: '👍 Tepat sekali! 24 : 6 = 4. Pilihan yang benar adalah 4.',
+    wrongMsg: '🤔 Ingat perkalian: 6 × 4 = 24. Jadi 24 : 6 = 4. Jawaban yang benar adalah 4.',
+    hint: 'Hitung lompatan dari 0 kelipatan 6: 6, 12, 18, 24. Ada berapa lompatan?'
+  },
+  {
+    type: 'benar-salah', category: 'langsung',
+    instruction: 'Tentukan apakah pernyataan berikut BENAR atau SALAH dengan mengklik pilihanmu.',
+    question: 'Pernyataan: <span class="math">35 : 5 = 7</span>',
+    options: ['Benar', 'Salah'],
+    answer: 'Benar',
+    correctMsg: '🎉 Pintar! Pernyataan itu BENAR. 5 × 7 = 35, jadi 35 : 5 = 7.',
+    wrongMsg: '💭 Cek dengan perkalian: 5 × 7 = 35. Karena hasilnya benar, maka 35 : 5 = 7 juga BENAR.',
+    hint: 'Cek dengan perkalian: 5 × 7 = ?'
+  },
+  {
+    type: 'isian', category: 'langsung',
+    instruction: 'Tulis jawabanmu di kotak yang tersedia.',
+    question: 'Berapakah hasil dari <span class="math">42 : 7 = ...</span>',
+    answer: 6,
+    correctMsg: '🌟 Mantap! 42 : 7 = 6. Kamu hebat!',
+    wrongMsg: '💪 Ingat perkalian: 7 × 6 = 42. Jadi 42 : 7 = 6.',
+    hint: '7 × berapa = 42?'
+  },
+  {
+    type: 'klik-kartu', category: 'langsung',
+    instruction: 'Klik kartu yang menunjukkan jawaban yang benar.',
+    question: 'Hasil dari <span class="math">48 : 8 = ...</span> ada di kartu nomor berapa?',
+    options: ['5', '6', '7', '8'],
+    answer: '6',
+    correctMsg: '🎯 Mantap! 48 : 8 = 6. Kamu jago berhitung!',
+    wrongMsg: '💭 8 × 6 = 48, jadi 48 : 8 = 6. Jawaban yang benar adalah kartu angka 6.',
+    hint: '8 × berapa = 48?'
+  },
+  {
+    type: 'pg', category: 'langsung',
+    instruction: 'Pilih satu jawaban yang paling benar.',
+    question: 'Berapakah hasil dari <span class="math">27 : 9 = ...</span>',
+    options: ['2', '3', '4', '5'],
+    answer: '3',
+    correctMsg: '👏 Tepat! 27 : 9 = 3. Kerja bagus!',
+    wrongMsg: '🤔 9 × 3 = 27, jadi 27 : 9 = 3. Jawaban yang benar adalah 3.',
+    hint: '9 × berapa = 27?'
+  },
+  {
+    type: 'pilih-semua', category: 'langsung',
+    instruction: 'Pilih SEMUA perhitungan yang hasilnya 6. Bisa lebih dari satu jawaban loh!',
+    question: 'Manakah perhitungan berikut yang hasilnya <span class="math">6</span>?',
+    options: [
+      { text: '36 : 6', value: true },
+      { text: '24 : 5', value: false },
+      { text: '18 : 3', value: true },
+      { text: '12 : 3', value: false },
+      { text: '30 : 5', value: true }
+    ],
+    correctMsg: '🌟 Luar biasa! Kamu berhasil memilih semua jawaban yang benar!',
+    wrongMsg: '💭 Yang menghasilkan 6 adalah: 36:6=6, 18:3=6, dan 30:5=6. Sedangkan 24:5=4 (sisa 4) dan 12:3=4, jadi bukan 6.',
+    hint: 'Hitung satu per satu, mana yang hasilnya tepat 6?'
+  },
+
+  // ===== 5 SOAL CERITA =====
+  {
+    type: 'pg', category: 'cerita',
+    instruction: 'Baca cerita dengan teliti, lalu pilih jawaban yang benar.',
+    question: '🍬 Ibu memiliki 20 buah permen. Permen itu dibagikan sama rata kepada 4 anak. Berapa banyak permen yang diterima setiap anak?',
+    options: ['4', '5', '6', '7'],
+    answer: '5',
+    correctMsg: '🍬 Hebat! 20 : 4 = 5. Jadi setiap anak menerima 5 permen.',
+    wrongMsg: '💭 Operasinya: 20 : 4 = 5. Jadi setiap anak menerima 5 permen. Jawaban yang benar adalah 5.',
+    hint: '20 permen dibagi untuk 4 anak = 20 : 4 = ?'
+  },
+  {
+    type: 'isian', category: 'cerita',
+    instruction: 'Baca cerita dengan teliti, lalu tulis jawabanmu.',
+    question: '🥭 Pak Budi memanen 30 buah mangga. Mangga-mangga itu akan dimasukkan ke dalam 6 keranjang dengan jumlah sama banyak. Berapa buah mangga di setiap keranjang?',
+    answer: 5,
+    correctMsg: '🥭 Pintar! 30 : 6 = 5. Setiap keranjang berisi 5 mangga.',
+    wrongMsg: '💭 30 mangga dibagi ke 6 keranjang = 30 : 6 = 5. Jadi setiap keranjang berisi 5 mangga.',
+    hint: '30 : 6 = ?'
+  },
+  {
+    type: 'klik-kartu', category: 'cerita',
+    instruction: 'Baca cerita dengan teliti, lalu klik kartu jawaban yang benar.',
+    question: '🪑 Di ruang kelas ada 24 buah kursi. Kursi disusun menjadi 4 baris dengan jumlah sama panjang. Berapa banyak kursi di setiap baris? Klik kartu jawabannya.',
+    options: ['5', '6', '7', '8'],
+    answer: '6',
+    correctMsg: '🪑 Tepat! 24 : 4 = 6. Setiap baris terdiri dari 6 kursi.',
+    wrongMsg: '💭 24 kursi dibagi 4 baris = 24 : 4 = 6. Jadi setiap baris terdiri dari 6 kursi.',
+    hint: '24 : 4 = ?'
+  },
+  {
+    type: 'isian', category: 'cerita',
+    instruction: 'Baca cerita dengan teliti, lalu tulis jawabanmu.',
+    question: '📄 Ibu guru memiliki 45 lembar kertas gambar. Kertas itu akan dibagikan kepada 9 siswa secara merata. Berapa lembar kertas yang diterima setiap siswa?',
+    answer: 5,
+    correctMsg: '📄 Hebat! 45 : 9 = 5. Setiap siswa menerima 5 lembar kertas.',
+    wrongMsg: '💭 45 kertas dibagi 9 siswa = 45 : 9 = 5. Jadi setiap siswa menerima 5 lembar kertas.',
+    hint: '45 : 9 = ?'
+  },
+  {
+    type: 'pg', category: 'cerita',
+    instruction: 'Baca cerita dengan teliti, lalu pilih jawaban yang benar.',
+    question: '🎈 Andi memiliki 32 buah permen karet. Ia membaginya kepada 8 temannya dengan jumlah sama banyak. Berapa permen karet yang diterima setiap teman Andi?',
+    options: ['3', '4', '5', '6'],
+    answer: '4',
+    correctMsg: '🎈 Tepat! 32 : 8 = 4. Setiap teman Andi menerima 4 permen karet.',
+    wrongMsg: '💭 32 permen dibagi 8 teman = 32 : 8 = 4. Jadi setiap teman Andi menerima 4 permen karet.',
+    hint: '32 : 8 = ?'
+  }
+];
+
+// ============================================================
+// STATE
+// ============================================================
+let currentQuestion = 0;
+let attempts = 0;
+let totalScore = 0;
+let results = [];
+let studentName = '';
+let studentClass = '';
+let selectedAnswer = null;   // untuk pg / benar-salah / klik-kartu
+let questionResolved = false; // gating: belum boleh lanjut jika false
+
+// ============================================================
+// MULAI KUIS
+// ============================================================
+document.getElementById('identityForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  studentName = document.getElementById('namaSiswa').value.trim();
+  studentClass = document.getElementById('kelasSiswa').value.trim();
+  if (!studentName || !studentClass) return;
+
+  document.getElementById('startScreen').style.display = 'none';
+  document.getElementById('quizScreen').style.display = 'block';
+  document.getElementById('studentName').textContent = studentName;
+  document.getElementById('studentClass').textContent = studentClass;
+  currentQuestion = 0;
+  results = [];
+  totalScore = 0;
+  showQuestion();
+});
+
+// ============================================================
+// TAMPILKAN SOAL
+// ============================================================
+function showQuestion() {
+  const q = questions[currentQuestion];
+  attempts = 0;
+  selectedAnswer = null;
+  questionResolved = false;
+
+  document.getElementById('questionCounter').textContent = `Soal ${currentQuestion + 1} dari 12`;
+  document.getElementById('progressFill').style.width = `${(currentQuestion / 12) * 100}%`;
+
+  const categoryLabel = q.category === 'cerita' ? '📖 Soal Cerita' : '✏️ Soal Langsung';
+  const categoryClass = q.category === 'cerita' ? 'cerita' : '';
+
+  let answerHtml = '';
+  if (q.type === 'isian') {
+    answerHtml = `
+      <div class="answer-area">
+        <input type="number" class="isian-input" id="isianAnswer" placeholder="..." autocomplete="off" inputmode="numeric">
+      </div>
+      <button class="btn-check" onclick="checkAnswer()">✅ Periksa Jawaban</button>
+    `;
+  } else if (q.type === 'pg') {
+    answerHtml = `<div class="options">`;
+    q.options.forEach((opt, i) => {
+      const marker = String.fromCharCode(65 + i);
+      answerHtml += `
+        <div class="option" data-value="${opt}" onclick="selectOption(this, '${opt}')">
+          <span class="option-marker">${marker}</span>
+          <span>${opt}</span>
+        </div>`;
+    });
+    answerHtml += `</div>
+      <button class="btn-check" onclick="checkAnswer()">✅ Periksa Jawaban</button>`;
+  } else if (q.type === 'benar-salah') {
+    answerHtml = `<div class="options" style="grid-template-columns: 1fr 1fr;">`;
+    q.options.forEach((opt) => {
+      answerHtml += `
+        <div class="option" data-value="${opt}" onclick="selectOption(this, '${opt}')" style="justify-content: center; font-size: 22px;">
+          <span>${opt === 'Benar' ? '✓ Benar' : '✗ Salah'}</span>
+        </div>`;
+    });
+    answerHtml += `</div>
+      <button class="btn-check" onclick="checkAnswer()">✅ Periksa Jawaban</button>`;
+  } else if (q.type === 'klik-kartu') {
+    answerHtml = `<div class="cards-grid">`;
+    q.options.forEach((opt) => {
+      answerHtml += `
+        <div class="card-option" data-value="${opt}" onclick="selectCard(this, '${opt}')">${opt}</div>`;
+    });
+    answerHtml += `</div>
+      <button class="btn-check" onclick="checkAnswer()">✅ Periksa Jawaban</button>`;
+  } else if (q.type === 'pilih-semua') {
+    answerHtml = `<div class="options">`;
+    q.options.forEach((opt, i) => {
+      answerHtml += `
+        <div class="option" data-idx="${i}" onclick="toggleCheckbox(this, ${i})">
+          <input type="checkbox" class="option-checkbox" id="cb${i}" data-value="${opt.value}">
+          <span>${opt.text}</span>
+        </div>`;
+    });
+    answerHtml += `</div>
+      <button class="btn-check" onclick="checkAnswer()">✅ Periksa Jawaban</button>`;
+  }
+
+  document.getElementById('questionArea').innerHTML = `
+    <div class="question-header">
+      <span class="question-badge ${categoryClass}">${categoryLabel}</span>
+      <span class="question-badge info">Soal No. ${currentQuestion + 1}</span>
+    </div>
+    <div class="question-instruction">📋 ${q.instruction}</div>
+    <div class="question-text">${q.question}</div>
+    ${answerHtml}
+    <div id="feedbackArea"></div>
+  `;
+
+  // Auto-focus for isian
+  if (q.type === 'isian') {
+    setTimeout(() => { const inp = document.getElementById('isianAnswer'); if (inp) inp.focus(); }, 100);
+  }
+}
+
+// ============================================================
+// HANDLER PILIHAN JAWABAN
+// ============================================================
+function selectOption(el, value) {
+  if (questionResolved) return;
+  el.parentElement.querySelectorAll('.option').forEach(s => s.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedAnswer = value;
+}
+
+function selectCard(el, value) {
+  if (questionResolved) return;
+  el.parentElement.querySelectorAll('.card-option').forEach(s => s.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedAnswer = value;
+}
+
+function toggleCheckbox(el, idx) {
+  if (questionResolved) return;
+  const cb = document.getElementById('cb' + idx);
+  cb.checked = !cb.checked;
+  el.classList.toggle('selected', cb.checked);
+}
+
+// ============================================================
+// PERIKSA JAWABAN
+// ============================================================
+function checkAnswer() {
+  if (questionResolved) return;
+  const q = questions[currentQuestion];
+  let isCorrect = false;
+
+  if (q.type === 'isian') {
+    const input = document.getElementById('isianAnswer');
+    const val = input.value.trim();
+    if (val === '') { alert('Yuk isi jawabanmu dulu! 😊'); return; }
+    isCorrect = Number(val) === q.answer;
+  } else if (q.type === 'pg' || q.type === 'benar-salah' || q.type === 'klik-kartu') {
+    if (selectedAnswer === null) { alert('Yuk pilih jawabanmu dulu! 😊'); return; }
+    isCorrect = String(selectedAnswer) === String(q.answer);
+  } else if (q.type === 'pilih-semua') {
+    let allCorrect = true;
+    q.options.forEach((opt, i) => {
+      const cb = document.getElementById('cb' + i);
+      if (cb.checked !== opt.value) allCorrect = false;
+    });
+    isCorrect = allCorrect;
+  }
+
+  attempts++;
+
+  if (isCorrect) {
+    if (attempts === 1) totalScore += 1;
+    else totalScore += 0.5;
+    results[currentQuestion] = { correct: true, attempts };
+    showCorrectFeedback(q);
+    questionResolved = true;
+  } else {
+    if (attempts < 2) {
+      // masih ada 1 kesempatan lagi
+      showRetryFeedback(q);
+    } else {
+      // kedua kalinya salah -> tampilkan jawaban benar, boleh lanjut
+      results[currentQuestion] = { correct: false, attempts };
+      showFinalWrongFeedback(q);
+      questionResolved = true;
+    }
+  }
+}
+
+// ============================================================
+// PENGUATAN (FEEDBACK)
+// ============================================================
+function showCorrectFeedback(q) {
+  const fb = document.getElementById('feedbackArea');
+  const attemptNote = attempts === 1
+    ? '⭐ Kamu benar pada percobaan pertama! Hebat sekali!'
+    : '⭐ Kamu berhasil benar setelah mencoba lagi. Tetap semangat, ya!';
+  fb.innerHTML = `
+    <div class="feedback correct">
+      <span class="feedback-icon">🎉</span>
+      <p><strong>Benar Sekali!</strong></p>
+      <p>${q.correctMsg}</p>
+      <p class="attempts-info">${attemptNote}</p>
+    </div>
+    <button class="btn-next" onclick="nextQuestion()">${currentQuestion === 11 ? '🏁 Lihat Hasil Akhir' : '➡️ Soal Berikutnya'}</button>
+  `;
+  disableCheckButton();
+  highlightCorrectAnswer(q);
+  // disable further interaction with answer area
+  setAnswerAreaDisabled(true);
+  fb.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function showRetryFeedback(q) {
+  const fb = document.getElementById('feedbackArea');
+  fb.innerHTML = `
+    <div class="feedback wrong">
+      <span class="feedback-icon">🤔</span>
+      <p><strong>Belum Tepat, Yuk Coba Lagi!</strong></p>
+      <p>${q.hint}</p>
+      <p class="attempts-info">Kamu masih punya 1 kesempatan lagi. Semangat ya! 💪</p>
+    </div>
+    <button class="btn-retry" onclick="retryQuestion()">🔄 Coba Lagi Sekarang</button>
+  `;
+  disableCheckButton();
+  fb.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function showFinalWrongFeedback(q) {
+  const fb = document.getElementById('feedbackArea');
+  fb.innerHTML = `
+    <div class="feedback show-answer">
+      <span class="feedback-icon">💡</span>
+      <p><strong>Yuk Lihat Jawaban yang Benar</strong></p>
+      <p>${q.wrongMsg}</p>
+      <p class="attempts-info">Jangan menyerah ya, belajar dari kesalahan membuatmu makin pintar! 😊</p>
+    </div>
+    <button class="btn-next" onclick="nextQuestion()">${currentQuestion === 11 ? '🏁 Lihat Hasil Akhir' : '➡️ Soal Berikutnya'}</button>
+  `;
+  disableCheckButton();
+  highlightCorrectAnswer(q);
+  markWrongSelection(q);
+  setAnswerAreaDisabled(true);
+  fb.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function highlightCorrectAnswer(q) {
+  if (q.type === 'pg' || q.type === 'benar-salah') {
+    const el = document.querySelector(`.option[data-value="${q.answer}"]`);
+    if (el) el.classList.add('correct');
+  } else if (q.type === 'klik-kartu') {
+    const el = document.querySelector(`.card-option[data-value="${q.answer}"]`);
+    if (el) el.classList.add('correct');
+  } else if (q.type === 'pilih-semua') {
+    q.options.forEach((opt, i) => {
+      if (opt.value) {
+        const els = document.querySelectorAll('.option');
+        if (els[i]) els[i].classList.add('correct');
+      }
+    });
+  } else if (q.type === 'isian') {
+    const input = document.getElementById('isianAnswer');
+    if (input) {
+      input.value = q.answer;
+      input.style.background = '#c6f6d5';
+      input.style.borderColor = '#38a169';
+    }
+  }
+}
+
+function markWrongSelection(q) {
+  if (q.type === 'pg' || q.type === 'benar-salah') {
+    const sel = document.querySelector('.option.selected');
+    if (sel && sel.dataset.value !== String(q.answer)) sel.classList.add('wrong');
+  } else if (q.type === 'klik-kartu') {
+    const sel = document.querySelector('.card-option.selected');
+    if (sel && sel.dataset.value !== String(q.answer)) sel.classList.add('wrong');
+  } else if (q.type === 'pilih-semua') {
+    q.options.forEach((opt, i) => {
+      const cb = document.getElementById('cb' + i);
+      const els = document.querySelectorAll('.option');
+      if (cb.checked && !opt.value) els[i].classList.add('wrong');
+      if (!cb.checked && opt.value) els[i].classList.add('wrong');
+    });
+  }
+}
+
+function setAnswerAreaDisabled(disabled) {
+  document.querySelectorAll('.option, .card-option, .isian-input').forEach(el => {
+    el.style.pointerEvents = disabled ? 'none' : '';
+    if (el.tagName === 'INPUT') el.disabled = disabled;
+  });
+}
+
+function disableCheckButton() {
+  const btn = document.querySelector('.btn-check');
+  if (btn) btn.disabled = true;
+}
+
+// ============================================================
+// COBA LAGI (RETRY)
+// ============================================================
+function retryQuestion() {
+  const q = questions[currentQuestion];
+  selectedAnswer = null;
+
+  if (q.type === 'isian') {
+    const input = document.getElementById('isianAnswer');
+    input.value = '';
+    input.focus();
+  } else if (q.type === 'pg' || q.type === 'benar-salah') {
+    document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+  } else if (q.type === 'klik-kartu') {
+    document.querySelectorAll('.card-option').forEach(o => o.classList.remove('selected'));
+  } else if (q.type === 'pilih-semua') {
+    document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+    q.options.forEach((opt, i) => {
+      const cb = document.getElementById('cb' + i);
+      if (cb) cb.checked = false;
+    });
+  }
+
+  document.getElementById('feedbackArea').innerHTML = '';
+  const btn = document.querySelector('.btn-check');
+  if (btn) btn.disabled = false;
+  // re-enable answer area
+  setAnswerAreaDisabled(false);
+}
+
+// ============================================================
+// SOAL BERIKUTNYA
+// ============================================================
+function nextQuestion() {
+  if (!questionResolved) return; // gating: harus selesai dulu
+  currentQuestion++;
+  if (currentQuestion >= questions.length) {
+    showResults();
+  } else {
+    showQuestion();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
+
+// ============================================================
+// HASIL AKHIR
+// ============================================================
+function showResults() {
+  document.getElementById('quizScreen').style.display = 'none';
+  document.getElementById('resultScreen').style.display = 'block';
+  document.getElementById('progressFill').style.width = '100%';
+
+  const totalCorrect = results.filter(r => r && r.correct).length;
+  const percentage = Math.round((totalCorrect / 12) * 100);
+  document.getElementById('scoreCircle').textContent = percentage + '%';
+
+  let stars = 1;
+  if (percentage >= 90) stars = 5;
+  else if (percentage >= 75) stars = 4;
+  else if (percentage >= 60) stars = 3;
+  else if (percentage >= 40) stars = 2;
+  document.getElementById('starsDisplay').innerHTML = '⭐'.repeat(stars) + '☆'.repeat(5 - stars);
+
+  let msg = '';
+  if (percentage >= 90) {
+    msg = `🎉 Luar biasa, ${studentName}! Kamu sangat hebat dalam pembagian. Pertahankan terus prestasimu, ya! 🌟`;
+  } else if (percentage >= 75) {
+    msg = `👍 Kerja bagus, ${studentName}! Kamu sudah pintar berhitung pembagian. Sedikit lagi untuk jadi juara!`;
+  } else if (percentage >= 60) {
+    msg = `💪 Bagus, ${studentName}! Kamu sudah cukup baik. Yuk berlatih lebih banyak lagi agar makin pintar!`;
+  } else if (percentage >= 40) {
+    msg = `😊 Tetap semangat, ${studentName}! Kamu sudah berusaha. Ayo berlatih lagi agar makin mahir pembagian!`;
+  } else {
+    msg = `🌈 Jangan menyerah, ${studentName}! Setiap juara pernah belajar dari awal. Yuk terus berlatih, kamu pasti bisa!`;
+  }
+  document.getElementById('resultMessage').textContent = msg;
+
+  let detailsHtml = `<h3 style="margin: 15px 0;">📊 Rincian Jawaban:</h3>`;
+  questions.forEach((q, i) => {
+    const r = results[i] || { correct: false, attempts: 0 };
+    const icon = r.correct ? '✅' : '❌';
+    const cls = r.correct ? 'correct' : 'wrong';
+    const info = r.correct
+      ? (r.attempts === 1 ? 'Benar (percobaan 1)' : 'Benar (percobaan 2)')
+      : 'Belum tepat (lihat pembahasan)';
+    const cleanQ = q.question.replace(/<[^>]+>/g, '').trim();
+    const shortQ = cleanQ.length > 55 ? cleanQ.substring(0, 55) + '...' : cleanQ;
+    detailsHtml += `
+      <div class="result-item ${cls}">
+        <span><span class="result-item-icon">${icon}</span> <strong>Soal ${i + 1}:</strong> ${shortQ}</span>
+        <span>${info}</span>
+      </div>`;
+  });
+  detailsHtml += `<p style="text-align:center; margin-top:15px; font-size:18px;"><strong>Total: ${totalCorrect} dari 12 soal benar (${percentage}%)</strong></p>`;
+  document.getElementById('resultDetails').innerHTML = detailsHtml;
+
+  if (percentage >= 75) createConfetti();
+}
+
+function createConfetti() {
+  const colors = ['#f6ad55', '#68d391', '#63b3ed', '#f687b3', '#f6e05e', '#b794f4'];
+  for (let i = 0; i < 60; i++) {
+    const c = document.createElement('div');
+    c.className = 'confetti';
+    c.style.left = Math.random() * 100 + '%';
+    c.style.background = colors[Math.floor(Math.random() * colors.length)];
+    c.style.animationDelay = Math.random() * 3 + 's';
+    c.style.animationDuration = (2 + Math.random() * 2) + 's';
+    document.body.appendChild(c);
+    setTimeout(() => c.remove(), 5000);
+  }
+}
+
+function restartQuiz() {
+  currentQuestion = 0;
+  attempts = 0;
+  totalScore = 0;
+  results = [];
+  selectedAnswer = null;
+  questionResolved = false;
+  document.querySelectorAll('.confetti').forEach(c => c.remove());
+  document.getElementById('resultScreen').style.display = 'none';
+  document.getElementById('quizScreen').style.display = 'none';
+  document.getElementById('startScreen').style.display = 'block';
+  document.getElementById('namaSiswa').value = '';
+  document.getElementById('kelasSiswa').value = '3';
+  document.getElementById('namaSiswa').focus();
+}
+</script>
+</body>
+</html>
